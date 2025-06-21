@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Happy Birthday</title>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #e5f5fa !important;
+      font-family: 'Montserrat', Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      box-sizing: border-box;
+      overflow-x: hidden;
+      position: relative;
+    }
+    .center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .cake-img {
+      width: 240px;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 16px #e6c6d8;
+      border: 6px solid #fff;
+      transition: box-shadow 0.2s;
+      cursor: pointer;
+    }
+    .cake-img:hover {
+      animation: shake 0.5s infinite;
+      box-shadow: 0 6px 32px #e6c6d8;
+    }
+    @keyframes shake {
+      0% { transform: rotate(0deg);}
+      20% { transform: rotate(-8deg);}
+      40% { transform: rotate(8deg);}
+      60% { transform: rotate(-6deg);}
+      80% { transform: rotate(6deg);}
+      100% { transform: rotate(0deg);}
+    }
+    .birthday-title {
+      font-size: 4rem;
+      font-weight: bold;
+      color: #444;
+      margin-bottom: 0.5rem;
+      text-align: center;
+      line-height: 1.1;
+    }
+    .birthday-title .pink {
+      color: #9ac8e5;
+      font-size: 3rem;
+      display: inline-block;
+      margin-left: 8px;
+    }
+    .birthday-desc {
+      font-size: 1.3rem;
+      color: #888;
+      margin-bottom: 32px;
+      text-align: center;
+    }
+    .btn {
+      padding: 22px 60px;
+      border: none;
+      border-radius: 32px;
+      font-size: 1.6rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 16px #e6c6d8;
+      background: #9ac8e5;
+      color: #fff;
+      transition: background 0.2s, transform 0.2s;
+      margin-top: 16px;
+    }
+    .btn:hover {
+      background: #6fa6d0;
+      transform: translateY(-2px) scale(1.04);
+    }
+    .music-btn {
+      position: fixed;
+      right: 32px;
+      bottom: 32px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #9ac8e5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 24px #e6c6d8;
+      cursor: pointer;
+      z-index: 100;
+      border: none;
+      outline: none;
+      transition: background 0.2s;
+    }
+    .music-btn:hover {
+      background: #6fa6d0;
+    }
+    .music-btn svg {
+      width: 32px;
+      height: 32px;
+      fill: #222;
+    }
+    .music-btn.muted {
+      background: #f8b6b6;
+    }
+    /* Firework effect */
+    #firework-container {
+      position: fixed;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      pointer-events: none;
+      z-index: 9999;
+    }
+    .firework-img {
+      position: absolute;
+      width: 80px;
+      opacity: 0.9;
+      animation: firework 1s linear forwards;
+      pointer-events: none;
+      user-select: none;
+    }
+    @keyframes firework {
+      0% { transform: translateY(0) scale(1); opacity: 1;}
+      80% { opacity: 1;}
+      100% { transform: translateY(-400px) scale(1.2); opacity: 0;}
+    }
+    #final-images {
+      position: fixed;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      display: none;
+      z-index: 10000;
+      pointer-events: none;
+      background: rgba(255,255,255,0.0);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      gap: 18px;
+    }
+    .marquee-wrapper {
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      height: 150px;
+    }
+    .marquee-track {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      will-change: transform;
+    }
+    .marquee-img {
+      width: 180px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 14px;
+      border: 8px solid #fff;
+      box-shadow: 0 4px 18px #0004;
+      background: #fff;
+      flex-shrink: 0;
+      margin: 0;
+    }
+    .marquee-row1 .marquee-track {
+      animation: marquee-left 150s linear infinite;
+    }
+    .marquee-row2 .marquee-track {
+      animation: marquee-right 150s linear infinite;
+    }
+    .marquee-row3 .marquee-track {
+      animation: marquee-left 150s linear infinite;
+    }
+    @keyframes marquee-left {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    @keyframes marquee-right {
+      0% { transform: translateX(-50%); }
+      100% { transform: translateX(0); }
+    }
+    @media (max-width: 900px) {
+      .carousel-container { width: 90vw; height: 90vw; min-width: 240px; min-height: 240px;}
+      .carousel-img { width: 90px; height: 60px; border-width: 3px; }
+      .marquee-img { width: 90px; height: 60px; border-width: 3px; }
+      .marquee-wrapper { height: 70px; }
+      #final-images { gap: 8px; }
+    }
+    .bg-blur-img {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      object-fit: cover;
+      z-index: 0;
+      
+      filter: blur(2px);
+      pointer-events: none;
+      user-select: none;
+    }
+    #main-content, #final-images, #firework-container, #envelope-section, #main-section, #thankyou-section, #no-section, #letter-popup, #confirm-open-popup {
+      position: relative;
+      z-index: 1;
+    }
+    #arrow-btn {
+      display: none;
+      position: fixed;
+      right: 100px;
+      bottom: 38px;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 4px 24px #9ac8e566;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      z-index: 101;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    #arrow-btn:hover {
+      background: #e3eefd;
+    }
+    #arrow-btn svg {
+      width: 32px;
+      height: 32px;
+      fill: #9ac8e5;
+    }
+    #split-view {
+      display: none;
+      position: fixed;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      z-index: 20000;
+      background: #e5f5fa;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+    }
+    .split-left {
+      flex: 1.2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: none;
+    }
+    .split-right {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: none;
+    }
+    .split-img {
+      width: 70%;
+      max-width: 480px;
+      border-radius: 18px;
+      border: 10px solid #fff;
+      box-shadow: 0 6px 32px #0003;
+      object-fit: cover;
+      background: #fff;
+    }
+    .typing-text {
+      font-size: 2.2rem;
+      color: #628ecb;
+      font-weight: bold;
+      font-family: 'Montserrat', Arial, sans-serif;
+      letter-spacing: 1.5px;
+      text-shadow: 0 2px 8px #0001;
+      min-height: 3.5em;
+      white-space: pre-line;
+      word-break: break-word;
+    }
+    @media (max-width: 900px) {
+      #arrow-btn { right: 16px; bottom: 16px; width: 40px; height: 40px; }
+      #arrow-btn svg { width: 22px; height: 22px; }
+      #split-view { flex-direction: column; }
+      .split-left, .split-right { height: 50vh; }
+      .split-img { width: 90vw; max-width: 98vw; }
+      .typing-text { font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+  <audio id="bg-music" src="img/videoplayback.mp4" loop></audio>
+  <div class="center" id="main-section">
+    <img src="img/ava.jpg" alt="cake" class="cake-img" id="cake-img">
+    <div class="birthday-title">
+      Happy Birthday<br>
+      <span class="pink">Trungggggg!</span> (｡◕‿◕｡)
+    </div>
+    <div class="birthday-desc">
+      Click the next button!! (つ✧v✧)つ♡
+    </div>
+    <button class="btn" id="next-btn">Next!! ♪~♪</button>
+  </div>
+
+  <!-- Giao diện bức thư -->
+  <div id="envelope-section" style="display:none; text-align:center;">
+    <img src="img/10-removebg-preview.png" alt="envelope" style="margin-top: 40px; width:320px;max-width:90vw;margin-bottom:24px;">
+    <div style="font-size:1.4rem;color:#888;margin:24px 0 32px;">
+      Do you want to open it? "ヾ( ･`⌓´･)ﾉ"
+    </div>
+    <button id="open-btn" style="padding:16px 36px;border:none;border-radius:24px;font-size:1.2rem;font-weight:bold;cursor:pointer;background:#9ac8e5;color:#fff;margin-right:16px;">Open it</button>
+    <button id="no-btn" style="padding:16px 36px;border:none;border-radius:24px;font-size:1.2rem;font-weight:bold;cursor:pointer;background:#7ed6c1;color:#fff;">NOOO</button>
+  </div>
+
+  <!-- Popup thư chúc mừng -->
+  <div id="letter-popup" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:999;background:rgba(60,40,60,0.45);align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:16px;max-width:600px;width:90vw;max-height:90vh;overflow:hidden;box-shadow:0 8px 40px #bfa6b8;position:relative;display:flex;flex-direction:column;">
+      <div style="background:#f9c6df;padding:18px 32px 12px 32px;border-radius:16px 16px 0 0;font-size:1.3rem;font-weight:bold;color:#7d4b6a;letter-spacing:1px;">
+        Ooo.. A message (ﾉ◕o◕)ﾉ♡ !!
+        <button id="close-letter" style="position:absolute;top:12px;right:18px;background:none;border:none;font-size:1.6rem;color:#7d4b6a;cursor:pointer;">×</button>
+      </div>
+      <div style="background:url('img/letter-bg.png') repeat-x top left #fff;padding:0;height:36px;"></div>
+      <div style="flex:1;overflow-y:auto;padding:32px 28px 32px 28px;">
+        <div style="font-size:2rem;font-weight:bold;color:#7d4b6a;margin-bottom:18px;text-align:center;">
+          Happy Birthday, MI BABYY (^‿^)
+        </div>
+        <div style="font-size:1.1rem;color:#7d4b6a;line-height:1.7;">
+          <p>oh shit, sorry babe, thực ra t có chút quên sinh nhật m huhuu. nhưng kp quên vì nay sinh nhật m, mà vì nay có quá nhiều to-do-list phải lm nên bạn quên mất. sorry babe rất nhiều nhiều luônnn </p>
+          <p>yahh, thực tâm mà nói thì... mình chưa có quá nhiều cơ hội để tìm hiểu về "u". Mặc dù m thỉnh thoảng sẽ hay overthinking về mọi người xung quanh, nhưng chung quy lại, thì trong đầu mình chỉ nhận định "mình có coi họ là bạn không" "họ có tốt không" và "họ có xứng đáng không". Và "u" cũng chính là như vậy, mình coi "u" là một người bạn mình vô cùng respect, vô cùng đáng học hỏi và rấc rấc tự hào. </p>
+          <p>
+           Thỉnh thoảng "u" có lo lắng hay nghi ngờ về bản thân thì hãy cứ nghĩ về những gì về "u" đã làm được, và hãy nhớ rằng luôn có người ủng hộ, tin tưởng và sẵn sàng support "u" đó chính là "me". Hãy lắng nghe trái tim nhiều hơn, hãy tự tin nhiều hơn, hãy cởi mở nhiều hơn, hãy bứt phá nhiều hơn.
+          </p>
+          <p>
+            Bước sang tuổi mới, chúc “u” chân cứng đá mềm, vững bước trên con đường mình chọn, và đừng quên “dịu dàng” và yêu lấy bản than thật nhiều là nhiều. Hãy cứ rực rỡ như cách cậu vẫn luôn thế, tỏa sáng theo cách riêng của mình, và nhớ rằng, dù có bất cứ điều gì xảy ra, mình vẫn luôn ở đây, dõi theo và tự hào về cậu. Chúc mừng sinh nhật, người bạn thân yêu của mình! 
+          </p>
+          <p>
+            Happy Birthday, my friend!! <span style="font-size:1.3em;">❤️</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Giao diện khi bấm "No ty" -->
+  <div id="no-section" style="display:none; text-align:center;">
+    <img src="img/cry.jpg" alt="cry" style="margin-top: 50px; width:260px;max-width:90vw;border-radius:16px;box-shadow:0 2px 16px #e6c6d8;border:6px solid #fff;margin-bottom:24px;">
+    <div style="font-size:2rem;font-weight:bold;color:#444;margin-bottom:18px;margin-top:12px;">
+      Awh.. Let's try again?<br>PLEASEE?
+    </div>
+    <button id="again-btn" style="padding:16px 36px;border:none;border-radius:24px;font-size:1.2rem;font-weight:bold;cursor:pointer;background:#9ac8e5;color:#fff;margin-top:16px;">Again..?</button>
+  </div>
+  <!-- Popup xác nhận mở thư thật -->
+  <div id="confirm-open-popup" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:999;background:rgba(60,40,60,0.45);align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:16px;max-width:400px;width:90vw;overflow:hidden;box-shadow:0 8px 40px #bfa6b8;position:relative;display:flex;flex-direction:column;align-items:center;padding:32px 16px;">
+      <img src="img/10-removebg-preview.png" alt="envelope" style="width:220px;max-width:80vw;margin-bottom:24px;">
+      <div style="font-size:1.5rem;color:#7d4b6a;margin-bottom:28px;text-align:center;font-weight:bold;">
+        Are u readyyy???
+      </div>
+      <div>
+        <button id="open-real-btn" style="padding:14px 32px;border:none;border-radius:24px;font-size:1.1rem;font-weight:bold;cursor:pointer;background:#9ac8e5;color:#fff;margin-right:16px;">Yehhh</button>
+        <button id="no-btn-2" style="padding:14px 32px;border:none;border-radius:24px;font-size:1.1rem;font-weight:bold;cursor:pointer;background:#7ed6c1;color:#fff;">Noooo</button>
+      </div>
+    </div>
+  </div>
+  <!-- Firework & final images -->
+  <div id="firework-container" style="display:none;"></div>
+  <div id="final-images" style="display:none;"></div>
+  <!-- Giao diện cảm ơn -->
+  <div id="thankyou-section" style="display:none;">
+    <div class="center">
+      <img src="img/5.jpg" alt="birthday cake" class="cake-img">
+      <div class="birthday-title">
+        Love u so muchhhh!!!!<br>
+        <span class="pink">my friend!</span> (｡◕‿◕｡)
+      </div>
+      <div class="birthday-desc">
+        Be strong, love yourself, and shine brightly! (つ◕ᴗ◕)つ♡
+      </div>
+    </div>
+  </div>
+  <button class="music-btn" id="music-btn" title="Toggle music">
+    <svg id="music-on" viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
+    <svg id="music-off" viewBox="0 0 24 24" style="display:none;"><path d="M16.5 12c0-2.485-2.015-4.5-4.5-4.5S7.5 9.515 7.5 12s2.015 4.5 4.5 4.5 4.5-2.015 4.5-4.5zm-4.5 6c-3.314 0-6-2.686-6-6s2.686-6 6-6 6 2.686 6 6-2.686 6-6 6zm8.485-1.071l-1.414-1.414A7.963 7.963 0 0 0 20 12c0-4.418-3.582-8-8-8S4 7.582 4 12c0 1.657.507 3.197 1.371 4.485l-1.414 1.414A9.953 9.953 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10c0 2.21-.721 4.247-1.929 5.929z"/></svg>
+  </button>
+  <button id="arrow-btn" title="Next">
+    <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+  </button>
+  <div id="split-view">
+    <div class="split-left">
+      <img id="split-img" class="split-img" src="" alt="split-img" />
+    </div>
+    <div class="split-right">
+      <div class="typing-text" id="typing-text"></div>
+    </div>
+  </div>
+  <script>
+    const music = document.getElementById('bg-music');
+    const musicBtn = document.getElementById('music-btn');
+    const musicOn = document.getElementById('music-on');
+    const musicOff = document.getElementById('music-off');
+    let isMuted = false;
+
+    // Auto play music on load
+    window.addEventListener('DOMContentLoaded', () => {
+      // Try to play music after user interaction (for browser policy)
+      const playMusic = () => {
+        music.volume = 0.7;
+        music.play().catch(()=>{});
+        document.body.removeEventListener('click', playMusic);
+      };
+      document.body.addEventListener('click', playMusic);
+      // Also try to play after a short delay
+      setTimeout(() => {
+        music.volume = 0.7;
+        music.play().catch(()=>{});
+      }, 800);
+    });
+
+    // Music button toggle
+    musicBtn.onclick = () => {
+      isMuted = !isMuted;
+      music.muted = isMuted;
+      musicOn.style.display = isMuted ? 'none' : '';
+      musicOff.style.display = isMuted ? '' : 'none';
+      musicBtn.classList.toggle('muted', isMuted);
+    };
+
+    document.getElementById('next-btn').onclick = () => {
+      document.getElementById('main-section').style.display = 'none';
+      document.getElementById('envelope-section').style.display = '';
+    };
+
+    // Sự kiện cho nút "Open it"
+    document.getElementById('open-btn').onclick = () => {
+      document.getElementById('confirm-open-popup').style.display = 'flex';
+    };
+
+    // Firework & final images logic
+    const fireworkContainer = document.getElementById('firework-container');
+    const finalImages = document.getElementById('final-images');
+    // 15 ảnh chạy ngang
+    const images = Array.from({length: 15}, (_, i) => `img/${i+1}.jpg`);
+
+    // Hiện nút mũi tên sau 5s khi showFinalImages
+    let arrowTimeout;
+    function showFinalImages() {
+      fireworkContainer.style.display = 'none';
+      finalImages.style.display = 'flex';
+      finalImages.innerHTML = '';
+
+      // Thêm dòng chữ xám
+  const label = document.createElement('div');
+  label.style.width = '100vw';
+  label.style.textAlign = 'center';
+  label.innerHTML = `<span style="color:#383838;font-size:1.25rem;font-family:'Montserrat',Arial,sans-serif;letter-spacing:1px;">
+    - *a few moments ✩°｡⋆⸜ 🎧✮
+  </span>`;
+  finalImages.appendChild(label);
+
+      // Xóa hộp quà nếu còn
+      let mainGift = document.getElementById('main-gift-img');
+      if (mainGift) mainGift.remove();
+
+      // Ảnh cho 3 hàng
+      const images1 = Array.from({length: 18}, (_, i) => `img/${18-i}.jpg`);
+      const images2 = Array.from({length: 18}, (_, i) => `img/${i+1}.jpg`);
+      const images3 = Array.from({length: 18}, (_, i) => `img/${18-i}.jpg`);
+
+      function createMarqueeRow(imagesArr, rowClass) {
+        const wrapper = document.createElement('div');
+        wrapper.className = `marquee-wrapper ${rowClass}`;
+        const track = document.createElement('div');
+        track.className = 'marquee-track';
+
+        // Lặp lại ảnh 2 lần để chạy liên tục
+        const repeat = 5;
+const allImgs = [];
+for (let r = 0; r < repeat; r++) {
+  allImgs.push(...imagesArr);
+}
+allImgs.forEach(src => {
+  const img = document.createElement('img');
+  img.src = src;
+  img.className = 'marquee-img';
+  track.appendChild(img);
+});
+
+        wrapper.appendChild(track);
+        return wrapper;
+      }
+
+      finalImages.appendChild(createMarqueeRow(images1, 'marquee-row1'));
+      finalImages.appendChild(createMarqueeRow(images2, 'marquee-row2'));
+      finalImages.appendChild(createMarqueeRow(images3, 'marquee-row3'));
+
+      // Hiện nút mũi tên sau 5s nếu cần
+      clearTimeout(arrowTimeout);
+      document.getElementById('arrow-btn').style.display = 'none';
+      arrowTimeout = setTimeout(() => {
+        document.getElementById('arrow-btn').style.display = 'flex';
+      }, 5000);
+    }
+
+    // Nút "Open it for real"
+    document.getElementById('open-real-btn').onclick = () => {
+      document.getElementById('confirm-open-popup').style.display = 'none';
+      // Ẩn tất cả giao diện khác
+      document.getElementById('main-section').style.display = 'none';
+      document.getElementById('envelope-section').style.display = 'none';
+      document.getElementById('no-section').style.display = 'none';
+      document.getElementById('thankyou-section').style.display = 'none';
+      fireworkContainer.style.display = 'block';
+      finalImages.style.display = 'none';
+      fireworkContainer.innerHTML = '';
+
+      // Hiện hộp quà ở giữa dưới cùng màn hình
+      let box = document.createElement('img');
+      box.src = 'img/10.png'; // ảnh hộp quà chính
+      box.style.position = 'fixed';
+      box.style.left = '50%';
+      box.style.bottom = '0';
+      box.style.transform = 'translateX(-50%)';
+      box.style.width = '200px';
+      box.style.maxWidth = '60vw';
+      box.style.zIndex = '10001';
+      box.id = 'main-gift-img';
+      document.body.appendChild(box);
+
+      // Animation pháo hoa từ hộp quà (chỉ lên trên các hướng)
+      const style = document.createElement('style');
+      style.innerHTML = `
+      @keyframes firework-from-box {
+        0% { transform: translateX(-50%) translate(0,0) scale(1); opacity: 1;}
+        80% { opacity: 1;}
+        100% { transform: translateX(-50%) translate(var(--x), calc(-1 * var(--y))) scale(1); opacity: 0;}
+      }`;
+      document.head.appendChild(style);
+
+      // Các hướng bắn: chỉ lên trên, chéo trái, chéo phải, sang trái/phải nhưng vẫn hướng lên
+      const directions = [
+        {angle: Math.PI/2}, // lên trên
+        {angle: Math.PI/3}, // chéo phải lên
+        {angle: 2*Math.PI/3}, // chéo trái lên
+        {angle: Math.PI/4}, // chéo phải lên nhẹ
+        {angle: 3*Math.PI/4}, // chéo trái lên nhẹ
+        {angle: Math.PI/6}, // chéo phải lên nhiều
+        {angle: 5*Math.PI/6} // chéo trái lên nhiều
+      ];
+
+      function launchFireworkFromBox() {
+        // Chọn ngẫu nhiên hướng bắn lên trên
+        const dir = directions[Math.floor(Math.random() * directions.length)];
+        const distance = 320 + Math.random() * 80;
+        const x = Math.cos(dir.angle) * distance;
+        const y = Math.sin(dir.angle) * distance;
+        const img = document.createElement('img');
+        img.src = images[Math.floor(Math.random() * images.length)];
+        img.className = 'firework-img';
+        img.style.left = '50%';
+        img.style.bottom = '80px'; // ngay trên hộp quà
+        img.style.transform = 'translateX(-50%)';
+        img.style.width = '80px';
+        img.style.height = '80px';
+        img.style.objectFit = 'cover';
+        img.style.setProperty('--x', `${x}px`);
+        img.style.setProperty('--y', `${y}px`);
+        img.style.animation = 'firework-from-box 1s linear forwards';
+        fireworkContainer.appendChild(img);
+        img.addEventListener('animationend', () => img.remove());
+      }
+
+      let fireworkInterval = setInterval(launchFireworkFromBox, 460);
+      setTimeout(() => {
+        clearInterval(fireworkInterval);
+        showFinalImages();
+        // Xóa hộp quà chính khi hiện ảnh nổi lên
+        setTimeout(() => {
+          fireworkContainer.style.display = 'none';
+          let mainGift = document.getElementById('main-gift-img');
+          if (mainGift) mainGift.remove();
+          style.remove();
+        }, imageCount * 400 + 1200);
+      }, 6000);
+    };
+
+    // Nút "No ty" trong popup xác nhận
+    document.getElementById('no-btn-2').onclick = () => {
+      document.getElementById('confirm-open-popup').style.display = 'none';
+      document.getElementById('envelope-section').style.display = 'none';
+      document.getElementById('no-section').style.display = '';
+    };
+
+    // Đóng popup thư
+    document.getElementById('close-letter').onclick = () => {
+      // Ẩn tất cả section khác, chỉ hiện thankyou-section
+      document.getElementById('letter-popup').style.display = 'none';
+      document.getElementById('main-section').style.display = 'none';
+      document.getElementById('envelope-section').style.display = 'none';
+      document.getElementById('no-section'). style.display = 'none';
+      document.getElementById('confirm-open-popup').style.display = 'none';
+      document.getElementById('thankyou-section').style.display = '';
+    };
+    // Sự kiện cho nút "No ty"
+    document.getElementById('no-btn').onclick = () => {
+      document.getElementById('envelope-section').style.display = 'none';
+      document.getElementById('no-section').style.display = '';
+    };
+
+    // Sự kiện cho nút "Again..?"
+    document.getElementById('again-btn').onclick = () => {
+      document.getElementById('no-section').style.display = 'none';
+      document.getElementById('main-section').style.display = '';
+    };
+
+    // Sự kiện click mũi tên
+    document.getElementById('arrow-btn').onclick = () => {
+      // Ẩn các giao diện khác
+      document.getElementById('final-images').style.display = 'none';
+      document.getElementById('arrow-btn').style.display = 'none';
+
+      // Hiện giao diện chia đôi
+      document.getElementById('split-view').style.display = 'flex';
+
+      // Hiện ảnh bên trái (lấy ảnh đầu tiên trong mảng images)
+      document.getElementById('split-img').src = "img/16.png";
+
+      // Sau 2s bắt đầu chạy chữ từng ký tự
+      const heading = `<div style="font-size:2.4rem;font-weight:bold;color:#6fa6d0;margin-bottom:20px; margin-right:15px;">Happy Birthday Trungggg!!</div>`;
+const text = `Yahh!!.... mặc dù t đã cố gắng nghĩ idea về biển hoặc chèn background, thì nó vẫn không thể thẩm nổi, trời ơi, nó xấu lắm á và phối màu của t cũng tệ, nên t đã chọn màu basic.  
+Hmmmmm.....chúc m tuổi mới sẽ học hành thuận lợi, ra trường đúng hạn với tấm bằng đẹp, có nhiều trải nghiệm thú vị và những cơ hội mới. Chúc m thức khuya sẽ không bị thận, code nhiều không bị hói, gym thì cứ lên tạ đều đều, và quan trọng là được nhiều deal hời trong cuộc sống nữa. Chúc mọi mục tiêu và ước nguyện của m sẽ thành hiện thực. I bet you can, wish you all the best!`;
+const gifs = `
+  <div style="display:flex;gap:18px;justify-content:center;">
+    <img src="img/25.jpg" style="width:180px;border-radius:10px;">
+    <img src="img/22.jpg" style="width:180px;border-radius:10px;">
+    <img src="img/26.jpg" style="width:180px;border-radius:10px;">
+  </div>
+`;
+const typingEl = document.getElementById('typing-text');
+typingEl.innerHTML = heading + `<div id="typing-content" style="color:#2b2b2b;font-size:12px;line-height:1.7;margin-right:15px;"></div>`;
+setTimeout(() => {
+  let i = 0;
+  function typeChar() {
+    if (i <= text.length) {
+      document.getElementById('typing-content').textContent = text.slice(0, i);
+      i++;
+      setTimeout(typeChar, 55);
+    }
+    else {
+      // Khi chạy xong chữ, thêm gif vào
+      typingEl.innerHTML += gifs;
+    }
+  }
+  typeChar();
+}, 2000);
+    };
+  </script>
+</body>
+</html>

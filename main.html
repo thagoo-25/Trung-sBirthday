@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday Trung</title>
+  <link rel="stylesheet" href="main.css">
+</head>
+<body>
+  <div class="moon"></div>
+  <canvas id="background"></canvas>
+
+  <div class="container">
+    <img src="/img/1.png" alt="cute dog" class="cute-img">
+    <h1>Happy Birthday <span class="highlight">Trung</span> (｡◕‿‿◕｡)</h1>
+    <p class="note">Click the next button!! (づ｡◕‿‿◕｡)づ♡</p>
+    <button class="next-button" onclick="goToNextStep()">Next!! ♪ ~ ♪</button>
+  </div>
+
+  <div class="music-icon" id="musicIcon" onclick="toggleMusic()">🎵</div>
+  <audio id="bg-music" loop>
+    <source src="/img/2.mp4" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+  <audio id="firework-audio" src="/img/2.jpg"></audio>
+  <audio id="birthday-song" src="/img/birthday.mp3"></audio>
+
+  <script src="script.js"></script>
+  <script>
+    // --- Hiệu ứng sao lấp lánh ---
+    const canvas = document.getElementById('background');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      createStars();
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    function createStars() {
+      stars = [];
+      for (let i = 0; i < 120; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 1.5 + 0.5,
+          alpha: Math.random(),
+          dAlpha: (Math.random() - 0.5) * 0.02
+        });
+      }
+    }
+    resizeCanvas();
+
+    function drawStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let star of stars) {
+        ctx.save();
+        ctx.globalAlpha = Math.abs(star.alpha);
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+        ctx.fillStyle = "#fff";
+        ctx.shadowColor = "#fff";
+        ctx.shadowBlur = 8;
+        ctx.fill();
+        ctx.restore();
+
+        // Update star
+        star.alpha += star.dAlpha;
+        if (star.alpha <= 0 || star.alpha >= 1) star.dAlpha *= -1;
+      }
+      requestAnimationFrame(drawStars);
+    }
+    drawStars();
+
+    // --- Music play/pause toggle ---
+    const music = document.getElementById('bg-music');
+    const musicIcon = document.getElementById('musicIcon');
+    function toggleMusic() {
+      if (music.paused) {
+        music.play();
+        musicIcon.textContent = '⏸️';
+      } else {
+        music.pause();
+        musicIcon.textContent = '🎵';
+      }
+    }
+    music.addEventListener('pause', () => { musicIcon.textContent = '🎵'; });
+    music.addEventListener('play', () => { musicIcon.textContent = '⏸️'; });
+
+    // --- Giao diện chuyển trang và xử lý nút ---
+    const container = document.querySelector('.container');
+    function goToNextStep() {
+      // Thay đổi giao diện sang phong bì
+      container.innerHTML = `
+        <img src="/img/2.jpg" alt="envelope" class="envelope-img" style="width:320px;max-width:90%;border-radius:16px;box-shadow:0 4px 24px #0001;">
+        <p class="note" id="envelope-text" style="font-size:1.4rem;margin:32px 0 24px 0;">Do you want to open it? "ヾ( ￣Ｏ￣)ツ"</p>
+        <div id="envelope-btns" style="display:flex;gap:24px;justify-content:center;">
+          <button id="openBtn" class="next-button" style="background:#e89dbb;">Open it</button>
+          <button id="noBtn" class="next-button" style="background:#7be3c5;">No ty</button>
+        </div>
+      `;
+      setupEnvelopeEvents();
+    }
+
+    function setupEnvelopeEvents() {
+      const openBtn = document.getElementById('openBtn');
+      const noBtn = document.getElementById('noBtn');
+      const text = document.getElementById('envelope-text');
+      const btns = document.getElementById('envelope-btns');
+      let noClick = 0;
+      let openClick = 0;
+
+      function handleNoClick() {
+        noClick++;
+        if (noClick === 1) {
+          text.textContent = "Wuee, sao ko mở, muốn biết bên trong là gì ko";
+          // Nút "No" nhảy vị trí
+          noBtn.style.position = "relative";
+          noBtn.style.left = (Math.random() * 120 - 60) + "px";
+          noBtn.style.top = (Math.random() * 40 - 20) + "px";
+        } else if (noClick === 2) {
+          text.textContent = "Hả, m tệ đến mức k muốn mở ra à";
+          btns.innerHTML = `
+            <button id="openBtn" class="next-button" style="background:#e89dbb;">T sẽ mở nó</button>
+            <button id="openBtn2" class="next-button" style="background:#e89dbb;">T cực kỳ muốn mở nó mà</button>
+          `;
+          document.getElementById('openBtn').onclick = handleOpenClick;
+          document.getElementById('openBtn2').onclick = handleOpenClick;
+        }
+      }
+
+      function handleOpenClick() {
+        openClick++;
+        if (openClick === 1) {
+          text.textContent = "Hả, m háo hức thế cơ á";
+        } else if (openClick === 2) {
+          text.textContent = "Sẵn sàng thật chưaaa?";
+        } else if (openClick === 3) {
+          text.textContent = "Lần này bắt đầu thật nháaa";
+        } else {
+          showBigGiftBox();
+        }
+      }
+
+      openBtn.onclick = handleOpenClick;
+      noBtn.onclick = handleNoClick;
+    }
+
+    // --- Hộp quà to đùng ---
+    function showBigGiftBox() {
+      container.innerHTML = `
+        <div id="bigGiftBox" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;">
+          <img src="/img/1.jpg" alt="giftbox" id="giftBoxImg" style="width:260px;max-width:90%;transition:transform 0.2s;cursor:pointer;">
+          <div style="margin-top:24px;font-size:1.2rem;color:#e89dbb;">Click vào hộp quà để mở nhé!</div>
+        </div>
+      `;
+      // Hiệu ứng rung hộp quà
+      const giftBoxImg = document.getElementById('giftBoxImg');
+      let shake = true;
+      let shakeCount = 0;
+      function shakeBox() {
+        if (!shake) return;
+        giftBoxImg.style.transform = `rotate(${Math.sin(Date.now()/80)*5}deg) scale(1.05)`;
+        shakeCount++;
+        if (shakeCount < 60) requestAnimationFrame(shakeBox);
+        else giftBoxImg.style.transform = "scale(1.08)";
+      }
+      shakeBox();
+
+      giftBoxImg.onclick = () => {
+        shake = false;
+        giftBoxImg.style.transform = "scale(1.15)";
+        setTimeout(() => {
+          showFlyingImagesAndFireworks();
+        }, 400);
+      };
+    }
+
+    // --- Ảnh bay lên và pháo hoa ---
+    function showFlyingImagesAndFireworks() {
+      container.innerHTML = `
+        <div id="fireworkLayer" style="position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:10"></div>
+        <div id="flyingImgs" style="position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:11"></div>
+        <div id="hbText" style="position:fixed;top:40%;left:50%;transform:translate(-50%,-50%);font-size:2.8rem;font-weight:bold;color:#e89dbb;text-shadow:0 2px 16px #fff,0 0 8px #e89dbb;z-index:12;opacity:0;transition:opacity 1s;">Happy birthday to Trung</div>
+      `;
+      // 10 ảnh bay lên
+      const imgList = [];
+      for(let i=1;i<=10;i++) imgList.push(`/img/${i}.png`);
+      const flyingImgs = document.getElementById('flyingImgs');
+      imgList.forEach((src, idx) => {
+        const img = document.createElement('img');
+        img.src = src;
+        img.style.position = 'absolute';
+        img.style.left = (window.innerWidth/2 - 60 + Math.random()*120) + 'px';
+        img.style.top = (window.innerHeight/2 + 60) + 'px';
+        img.style.width = '70px';
+        img.style.opacity = '0.9';
+        img.style.transition = 'transform 1.2s cubic-bezier(.17,.67,.83,.67), opacity 1.2s';
+        flyingImgs.appendChild(img);
+        setTimeout(() => {
+          img.style.transform = `translate(${Math.random()*400-200}px, -${350+Math.random()*120}px) rotate(${Math.random()*80-40}deg) scale(${1+Math.random()*0.5})`;
+          img.style.opacity = '0';
+        }, 200 + idx*120);
+      });
+
+      // Pháo hoa
+      launchFireworks();
+
+      // Hiện chữ chúc mừng
+      setTimeout(()=>{
+        document.getElementById('hbText').style.opacity = 1;
+      }, 1800);
+
+      // Sau 10s hiện box chat
+      setTimeout(()=>{
+        showChatBox();
+      }, 10000);
+    }
+
+    // --- Pháo hoa đơn giản ---
+    function launchFireworks() {
+      const fireworkLayer = document.getElementById('fireworkLayer');
+      for(let i=0;i<7;i++) {
+        setTimeout(()=>{
+          createFirework(Math.random()*window.innerWidth*0.8+window.innerWidth*0.1, Math.random()*window.innerHeight*0.4+window.innerHeight*0.1);
+        }, i*400);
+      }
+    }
+    function createFirework(x, y) {
+      const fireworkAudio = document.getElementById('firework-audio');
+      if (fireworkAudio) {
+        fireworkAudio.currentTime = 0;
+        fireworkAudio.play();
+      }
+      const fireworkLayer = document.getElementById('fireworkLayer');
+      for(let i=0;i<24;i++) {
+        const dot = document.createElement('div');
+        dot.style.position = 'absolute';
+        dot.style.left = x+'px';
+        dot.style.top = y+'px';
+        dot.style.width = '8px';
+        dot.style.height = '8px';
+        dot.style.borderRadius = '50%';
+        dot.style.background = `hsl(${Math.random()*360},90%,60%)`;
+        dot.style.opacity = '1';
+        dot.style.transform = 'scale(1)';
+        dot.style.transition = 'all 1.2s cubic-bezier(.17,.67,.83,.67)';
+        fireworkLayer.appendChild(dot);
+        setTimeout(()=>{
+          dot.style.left = (x + Math.cos(i/24*2*Math.PI)*90) + 'px';
+          dot.style.top = (y + Math.sin(i/24*2*Math.PI)*90) + 'px';
+          dot.style.opacity = '0';
+          dot.style.transform = 'scale(0.7)';
+        }, 30);
+        setTimeout(()=>{ dot.remove(); }, 1400);
+      }
+    }
+
+    // --- Chat box vui ---
+    function showChatBox() {
+      const chatArr = [
+        "Zuii khummm",
+        "Gì cơ, có vuiii không cơ",
+        "Không vui cũm zui lên, nay sinh nhật nà",
+        "chơi tiếp nữa khum nà"
+      ];
+      let chatIdx = 0;
+      // Tạo box chat
+      let chatBox = document.createElement('div');
+      chatBox.id = "chatBox";
+      chatBox.style.position = "fixed";
+      chatBox.style.bottom = "40px";
+      chatBox.style.left = "50%";
+      chatBox.style.transform = "translateX(-50%)";
+      chatBox.style.background = "#fff";
+      chatBox.style.borderRadius = "18px";
+      chatBox.style.boxShadow = "0 4px 24px #0002";
+      chatBox.style.padding = "22px 38px";
+      chatBox.style.fontSize = "1.3rem";
+      chatBox.style.color = "#e89dbb";
+      chatBox.style.cursor = "pointer";
+      chatBox.style.zIndex = "100";
+      chatBox.textContent = chatArr[chatIdx];
+      document.body.appendChild(chatBox);
+
+      chatBox.onclick = () => {
+        chatIdx++;
+        if(chatIdx < chatArr.length) {
+          chatBox.textContent = chatArr[chatIdx];
+        } else {
+          chatBox.textContent = "🥳🥳🥳";
+          setTimeout(()=>{
+            chatBox.remove();
+            showBirthdayCake(); // Chuyển sang trang bánh sinh nhật sau chat cuối
+          }, 2000);
+        }
+      };
+    }
+
+    // --- Bánh sinh nhật và nến ---
+    function showBirthdayCake() {
+      container.innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;">
+          <div style="position:relative;">
+            <img src="/img/cake.png" alt="birthday cake" style="width:320px;max-width:90%;z-index:1;">
+            <div id="candle" style="position:absolute;left:50%;top:38px;transform:translateX(-50%);width:24px;height:60px;z-index:2;cursor:pointer;">
+              <div id="flame" style="width:18px;height:28px;background:radial-gradient(ellipse at center,#ffe066 60%,#ffb700 100%,transparent 100%);border-radius:50% 50% 60% 60%;position:absolute;top:-28px;left:3px;opacity:1;transition:opacity 0.4s;"></div>
+              <div style="width:8px;height:40px;background:#fff;border-radius:4px;position:absolute;left:8px;top:0;"></div>
+            </div>
+          </div>
+          <div id="candle-tip" style="margin-top:12px;color:#888;font-size:1.1rem;opacity:0;transition:opacity 0.3s;">Đốt nến đi</div>
+        </div>
+      `;
+
+      // Hiệu ứng hover hiện chú thích
+      const candle = document.getElementById('candle');
+      const tip = document.getElementById('candle-tip');
+      candle.addEventListener('mouseenter', () => { tip.style.opacity = 1; });
+      candle.addEventListener('mouseleave', () => { tip.style.opacity = 0; });
+
+      // Đốt nến
+      let burned = false;
+      candle.onclick = () => {
+        if (burned) return;
+        burned = true;
+        document.getElementById('flame').style.opacity = 0;
+        tip.style.opacity = 0;
+        setTimeout(() => {
+          playBirthdaySong();
+          showWishBox();
+          setTimeout(() => showWishBox2(), 2000);
+          setTimeout(() => showWishBox3(), 4000);
+          setTimeout(() => extinguishCandle(), 10000);
+        }, 400);
+      };
+    }
+
+    // Phát nhạc chúc mừng sinh nhật
+    function playBirthdaySong() {
+      const song = document.getElementById('birthday-song');
+      if (song) {
+        song.currentTime = 0;
+        song.play();
+      }
+    }
+
+    // Hiển thị các box nhắc ước
+    function showWishBox() {
+      showWishMsg("Nhanh ước đi ơ kìa");
+    }
+    function showWishBox2() {
+      showWishMsg("Chưa nhắm mắt à");
+    }
+    function showWishBox3() {
+      showWishMsg("Ước đi nhanh k nến tắt giờ");
+    }
+    function showWishMsg(msg) {
+      let wishBox = document.getElementById('wishBox');
+      if (!wishBox) {
+        wishBox = document.createElement('div');
+        wishBox.id = "wishBox";
+        wishBox.style.position = "fixed";
+        wishBox.style.bottom = "40px";
+        wishBox.style.left = "50%";
+        wishBox.style.transform = "translateX(-50%)";
+        wishBox.style.background = "#fff";
+        wishBox.style.borderRadius = "18px";
+        wishBox.style.boxShadow = "0 4px 24px #0002";
+        wishBox.style.padding = "22px 38px";
+        wishBox.style.fontSize = "1.3rem";
+        wishBox.style.color = "#e89dbb";
+        wishBox.style.cursor = "pointer";
+        wishBox.style.zIndex = "100";
+        document.body.appendChild(wishBox);
+      }
+      wishBox.textContent = msg;
+    }
+
+    // Nến tắt sau 10s
+    function extinguishCandle() {
+      let wishBox = document.getElementById('wishBox');
+      if (wishBox) wishBox.textContent = "Nến tắt mất tiu rồi 😆";
+      setTimeout(() => {
+        if (wishBox) wishBox.remove();
+        showLuckyWheel();
+      }, 1800);
+    }
+
+    // --- Vòng quay may mắn ---
+    function showLuckyWheel() {
+      const prizes = [
+        "5 triệu", "8 triệu", "0đ", "10 triệu", "0đ", "0đ", "0đ", "0đ"
+      ];
+      const colors = [
+        "#f9d423", "#e57373", "#81c784", "#64b5f6", "#ffd54f", "#ba68c8", "#ffb74d", "#4dd0e1"
+      ];
+      container.innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;">
+          <div style="font-size:2rem;color:#e89dbb;font-weight:bold;margin-bottom:24px;">Vòng quay may mắn</div>
+          <canvas id="wheel" width="340" height="340" style="border-radius:50%;box-shadow:0 4px 24px #0002;"></canvas>
+          <button id="spinBtn" class="next-button" style="margin-top:32px;background:#e89dbb;font-size:1.2rem;">Quay thôi!</button>
+        </div>
+      `;
+
+      const wheel = document.getElementById('wheel');
+      const ctx = wheel.getContext('2d');
+      const spinBtn = document.getElementById('spinBtn');
+      let angle = 0;
+      let spinning = false;
+
+      // Vẽ vòng quay
+      function drawWheel(currentAngle = 0) {
+        ctx.clearRect(0, 0, wheel.width, wheel.height);
+        const cx = wheel.width/2, cy = wheel.height/2, r = 160;
+        for(let i=0;i<prizes.length;i++) {
+          const start = currentAngle + i*2*Math.PI/prizes.length;
+          const end = currentAngle + (i+1)*2*Math.PI/prizes.length;
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.arc(cx, cy, r, start, end);
+          ctx.closePath();
+          ctx.fillStyle = colors[i%colors.length];
+          ctx.fill();
+          ctx.save();
+          ctx.translate(cx, cy);
+          ctx.rotate(start + Math.PI/prizes.length);
+          ctx.textAlign = "right";
+          ctx.font = "bold 1.1rem Arial";
+          ctx.fillStyle = "#fff";
+          ctx.fillText(prizes[i], r-18, 10);
+          ctx.restore();
+        }
+        // Vẽ kim chỉ
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(0);
+        ctx.beginPath();
+        ctx.moveTo(0, -r-8);
+        ctx.lineTo(-12, -r+24);
+        ctx.lineTo(12, -r+24);
+        ctx.closePath();
+        ctx.fillStyle = "#e89dbb";
+        ctx.fill();
+        ctx.restore();
+      }
+      drawWheel();
+
+      // Quay vòng quay
+      spinBtn.onclick = () => {
+        if (spinning) return;
+        spinning = true;
+        let spinAngle = Math.random()*2*Math.PI + 8*Math.PI; // Quay nhiều vòng
+        let duration = 3200;
+        let start = null;
+        function animateWheel(ts) {
+          if (!start) start = ts;
+          let progress = (ts - start) / duration;
+          if (progress > 1) progress = 1;
+          angle = spinAngle * easeOutCubic(progress);
+          drawWheel(angle);
+          if (progress < 1) {
+            requestAnimationFrame(animateWheel);
+          } else {
+            // Xác định phần thưởng
+            let idx = prizes.length - Math.floor(((angle % (2*Math.PI)) / (2*Math.PI)) * prizes.length) - 1;
+            if (idx < 0) idx += prizes.length;
+            setTimeout(() => {
+              showPrizeResult(prizes[idx]);
+            }, 800);
+          }
+        }
+        requestAnimationFrame(animateWheel);
+      };
+
+      function easeOutCubic(t) {
+        return 1 - Math.pow(1 - t, 3);
+      }
+    }
+
+    // Hiển thị kết quả vòng quay và chuyển sang trang nghiêm túc
+    function showPrizeResult(prize) {
+      container.innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;">
+          <img src="https://i.imgur.com/6QK7Q7F.png" alt="meme" style="width:220px;max-width:90%;border-radius:18px;box-shadow:0 4px 24px #0002;margin-bottom:24px;">
+          <div style="font-size:2rem;color:#e89dbb;font-weight:bold;margin-bottom:18px;">Tưởng được tiền à? Ngôôô 🤣</div>
+        </div>
+      `;
+      setTimeout(() => {
+        showSeriousPage();
+      }, 2200);
+    }
+
+    // Trang nghiêm túc: ảnh + chữ + nút Start
+    function showSeriousPage() {
+      container.innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;">
+          <img src="/img/serious.png" alt="serious" style="width:220px;max-width:90%;border-radius:18px;box-shadow:0 4px 24px #0002;margin-bottom:24px;">
+          <div style="font-size:2rem;color:#e89dbb;font-weight:bold;margin-bottom:18px;">Nghiêm túc nè</div>
+          <button id="startSerious" class="next-button" style="margin-top:24px;background:#e89dbb;font-size:1.2rem;">Start</button>
+        </div>
+      `;
+      document.getElementById('startSerious').onclick = showPasswordBox;
+    }
+
+    // Hiển thị ô nhập mật khẩu
+    function showPasswordBox() {
+      container.innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;">
+          <div style="font-size:1.3rem;color:#e89dbb;font-weight:bold;margin-bottom:18px;">Nhập mật khẩu để mở quà cuối cùng</div>
+          <div style="color:#888;margin-bottom:12px;">(Gợi ý: số quen thuộc)</div>
+          <input id="pwInput" type="password" maxlength="8" style="padding:8px 16px;font-size:1.2rem;border-radius:8px;border:1px solid #e89dbb;outline:none;margin-bottom:18px;">
+          <button id="pwBtn" class="next-button" style="background:#e89dbb;">Mở quà</button>
+          <div id="pwError" style="color:#e57373;margin-top:10px;min-height:24px;"></div>
+        </div>
+      `;
+      document.getElementById('pwBtn').onclick = () => {
+        const val = document.getElementById('pwInput').value.trim();
+        if(val === "1234") {
+          showFinalGift();
+        } else {
+          document.getElementById('pwError').textContent = "Sai mật khẩu rồi 😝";
+        }
+      };
+    }
+
+    // Hiển thị lá thư, click để mở thư
+    function showFinalGift() {
+      container.innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;">
+          <img src="/img/letter.png" alt="letter" id="finalLetter" style="width:220px;max-width:90%;border-radius:18px;box-shadow:0 4px 24px #0002;margin-bottom:24px;cursor:pointer;transition:transform 0.2s;">
+          <div style="font-size:1.2rem;color:#e89dbb;">Click vào lá thư để mở</div>
+        </div>
+      `;
+      document.getElementById('finalLetter').onclick = showLetterContent;
+    }
+
+    // Hiển thị nội dung thư như ảnh bạn gửi
+    function showLetterContent() {
+      // Overlay mờ toàn màn hình
+      const overlay = document.createElement('div');
+      overlay.style.position = 'fixed';
+      overlay.style.left = 0;
+      overlay.style.top = 0;
+      overlay.style.width = '100vw';
+      overlay.style.height = '100vh';
+      overlay.style.background = 'rgba(80,60,80,0.45)';
+      overlay.style.zIndex = 9999;
+      overlay.style.display = 'flex';
+      overlay.style.alignItems = 'center';
+      overlay.style.justifyContent = 'center';
+
+      // Thư cuộn được
+      const letterBox = document.createElement('div');
+      letterBox.style.background = '#fff';
+      letterBox.style.maxWidth = '650px';
+      letterBox.style.width = '95vw';
+      letterBox.style.maxHeight = '80vh';
+      letterBox.style.borderRadius = '16px';
+      letterBox.style.boxShadow = '0 4px 32px #0002';
+      letterBox.style.overflowY = 'auto';
+      letterBox.style.padding = '0 0 32px 0';
+      letterBox.tabIndex = 0;
+
+      letterBox.innerHTML = `
+        <div style="background:url('https://i.imgur.com/8Qw2QwF.png') top center repeat-x;height:80px;border-radius:16px 16px 0 0;"></div>
+        <div style="padding:32px 24px 0 24px;">
+          <div style="font-size:1.6rem;color:#e89dbb;font-weight:bold;margin-bottom:18px;text-align:center;">Ooo.. A message (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ !!</div>
+          <div style="font-size:1.4rem;color:#a55;text-align:center;font-weight:bold;margin-bottom:18px;">Happy Birthday, MI BABYY (^‿^)</div>
+          <div style="font-size:1.1rem;color:#555;line-height:1.7;">
+            Today is all about celebrating you the incredible person who brings so much joy, love, and light into my life. I feel so lucky to call you mine. You've shown me what true love feels like, and every day with you is a beautiful adventure.<br><br>
+            I love everything about you your smile, your laugh, your strength, your kindness. You make me feel safe, supported, and deeply loved. I'm so proud of the person you are and everything you're becoming.<br><br>
+            On your special day, I just want to say thank you. Thank you for being you. Thank you for letting me love you. And thank you for loving me back.<br><br>
+            Happy birthday, my love. I hope all your wishes come true.<br><br>
+            <b>Love you so much! 💖</b>
+          </div>
+        </div>
+      `;
+
+      // Đóng khi click ngoài thư
+      overlay.onclick = function(e) {
+        if (e.target === overlay) overlay.remove();
+      };
+
+      overlay.appendChild(letterBox);
+      document.body.appendChild(overlay);
+
+      // Tự focus để cuộn bằng phím nếu muốn
+      letterBox.focus();
+    }
+  </script>
+</body>
+</html>

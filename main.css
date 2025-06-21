@@ -1,0 +1,80 @@
+body {
+  margin: 0;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  background: #0a192f;
+  color: white;
+  overflow: hidden;
+  text-align: center;
+}
+
+.container {
+  position: relative;
+  z-index: 2;
+  padding-top: 80px;
+}
+
+.highlight {
+  color: #ffb6c1;
+}
+
+.cute-img {
+  width: 150px;
+  border-radius: 20px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.cute-img:hover {
+  transform: rotate(-5deg) rotate(5deg);
+  animation: shake 0.5s infinite alternate;
+}
+
+@keyframes shake {
+  from { transform: rotate(-3deg); }
+  to { transform: rotate(3deg); }
+}
+
+.note {
+  color: #ccc;
+  font-size: 1.1em;
+  margin-bottom: 20px;
+}
+
+.next-button {
+  background-color: #ff69b4;
+  border: none;
+  border-radius: 25px;
+  color: white;
+  font-size: 18px;
+  padding: 10px 30px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+  box-shadow: 0px 4px 15px rgba(0,0,0,0.2);
+}
+
+.next-button:hover {
+  background-color: #ff85c1;
+}
+
+.music-icon {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  font-size: 28px;
+  cursor: pointer;
+  z-index: 3;
+  transition: transform 0.3s;
+}
+
+.music-icon:hover {
+  transform: scale(1.2);
+}
+
+canvas#background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+}
